@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Digital Smarts Challenge</title>
+<style>
+:root{
+  --gold:#d4af37;
+  --gold-soft:#f5e4b3;
+  --gold-deep:#a8862a;
+  --bg:#000;
+  --panel:#0b0b0b;
+  --panel-2:#141414;
+  --line:rgba(212,175,55,.45);
+  --line-soft:rgba(212,175,55,.22);
+  --text:#fff;
+  --muted:#cdcdcd;
+  --bad:#e84a4a;
+  --good:#e7c34a;
+  --better:#f5e08a;
+  --best:#39c46b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body{min-height:100vh;background:radial-gradient(circle at 50% 0%,#1a1407 0%,#000 55%) no-repeat;background-attachment:fixed}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.app{max-width:720px;margin:0 auto;padding:18px 16px 40px;min-height:100vh;display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column}
+.screen.active{display:flex}
+
+.brandbar{display:flex;align-items:center;gap:12px;padding:8px 6px 14px;border-bottom:1px solid var(--line-soft);margin-bottom:18px}
+.brandbar .mark{width:46px;height:46px;border-radius:12px;background:#000;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 46px}
+.brandbar .mark img{width:100%;height:100%;object-fit:contain}
+.brandbar .title{font-size:15px;font-weight:700;letter-spacing:.3px;color:var(--gold-soft);line-height:1.1}
+.brandbar .sub{font-size:11px;color:var(--muted);letter-spacing:.3px}
+
+.hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;padding:18px 8px 8px}
+.hero-logo{width:170px;height:170px;border-radius:28px;background:#000;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 0 24px rgba(212,175,55,.35),inset 0 0 24px rgba(212,175,55,.15)}
+.hero-logo img{width:100%;height:100%;object-fit:contain}
+.hero h1{margin:6px 0 0;font-size:30px;line-height:1.1;letter-spacing:.5px;background:linear-gradient(180deg,#fff 0%,var(--gold-soft) 60%,var(--gold) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero .tagline{color:var(--muted);font-size:15px;line-height:1.45;max-width:520px;margin:0 auto}
+.hero .pill{display:inline-block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-soft);border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:#0a0a0a}
+.cta-stack{display:flex;flex-direction:column;gap:12px;width:100%;max-width:380px;margin:18px auto 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 18px;font-size:17px;font-weight:700;border-radius:14px;letter-spacing:.4px;border:1px solid var(--gold);background:linear-gradient(180deg,#1a1408,#000);color:var(--gold-soft);box-shadow:0 2px 0 rgba(0,0,0,.4),inset 0 1px 0 rgba(212,175,55,.25)}
+.btn.primary{background:linear-gradient(180deg,var(--gold) 0%,#b88a1c 100%);color:#0a0a0a;border-color:var(--gold);text-shadow:0 1px 0 rgba(255,255,255,.25)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.5}
+
+.card{background:linear-gradient(180deg,var(--panel) 0%,#080808 100%);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 1px 0 rgba(212,175,55,.1) inset}
+.card h2{margin:0 0 8px;color:var(--gold-soft);font-size:18px;letter-spacing:.3px}
+.card p{margin:0 0 10px;color:var(--muted);line-height:1.5;font-size:15px}
+.card ul{margin:6px 0 0 18px;padding:0;color:var(--muted);font-size:14px;line-height:1.55}
+.card ul li{margin-bottom:5px}
+
+.cha-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#0a0a0a;background:linear-gradient(180deg,var(--gold-soft),var(--gold));padding:6px 10px;border-radius:999px;border:1px solid var(--gold-deep)}
+.score{font-size:13px;color:var(--gold-soft);letter-spacing:.5px}
+.score b{color:#fff;font-size:18px}
+.progress-wrap{width:100%;height:8px;background:#1a1a1a;border:1px solid var(--line-soft);border-radius:999px;overflow:hidden;margin:0 0 14px}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--gold) 0%,var(--gold-soft) 100%);width:0%;transition:width .35s ease}
+.scenario-card{background:linear-gradient(180deg,#13100a 0%,#000 100%);border:1.5px solid var(--gold);border-radius:18px;padding:20px 18px;margin-bottom:14px;box-shadow:0 0 18px rgba(212,175,55,.18)}
+.scenario-num{font-size:12px;color:var(--gold-soft);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.scenario-title{font-size:16px;font-weight:700;color:#fff;margin:0 0 6px;line-height:1.3}
+.scenario-text{font-size:15px;color:var(--muted);line-height:1.5;margin:0}
+.answer-prompt{font-size:13px;color:var(--gold-soft);margin:14px 0 8px;letter-spacing:.5px;text-align:center}
+.answers{display:flex;flex-direction:column;gap:10px}
+.answer{display:flex;align-items:flex-start;gap:12px;text-align:left;padding:14px 14px;border:1.5px solid var(--line);border-radius:14px;background:#0a0a0a;color:#fff;font-size:15px;line-height:1.4;transition:transform .12s,border-color .2s,background .2s}
+.answer .qlabel{flex:0 0 64px;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:6px 0;text-align:center;border-radius:8px;border:1px solid var(--line-soft);background:#000;color:var(--gold-soft)}
+.answer .qtext{flex:1;color:#e8e8e8;font-size:14.5px}
+.answer:not(:disabled):active{transform:scale(.99)}
+.answer.locked{opacity:.7;cursor:default}
+.answer.picked{border-color:var(--gold-soft);background:#16110a}
+.answer.is-best{border-color:var(--best);background:rgba(57,196,107,.12)}
+.answer.is-best .qlabel{background:var(--best);color:#062812;border-color:var(--best)}
+.answer.is-bad{border-color:var(--bad);background:rgba(232,74,74,.08)}
+.answer.is-bad .qlabel{background:var(--bad);color:#2a0606;border-color:var(--bad)}
+.answer.is-good .qlabel{background:#3a3a3a;color:#fff;border-color:#666}
+.answer.is-better .qlabel{background:#5a5a5a;color:#fff;border-color:#888}
+.answer.dim{opacity:.45}
+
+.feedback{margin-top:14px;border-radius:16px;border:1.5px solid var(--line);padding:16px;background:#0a0a0a;display:none}
+.feedback.show{display:block}
+.feedback.correct{border-color:var(--best);background:rgba(57,196,107,.08)}
+.feedback.incorrect{border-color:var(--bad);background:rgba(232,74,74,.08)}
+.feedback .verdict{font-size:18px;font-weight:800;margin-bottom:8px;letter-spacing:.4px}
+.feedback.correct .verdict{color:var(--best)}
+.feedback.incorrect .verdict{color:var(--bad)}
+.feedback .lesson{font-size:14px;color:var(--muted);line-height:1.5;margin:6px 0 0}
+.feedback .why-best{font-size:14px;color:var(--gold-soft);line-height:1.5;margin:8px 0 0;padding-top:8px;border-top:1px dashed var(--line-soft)}
+.feedback .why-best b{color:var(--best)}
+.next-row{display:flex;gap:10px;margin-top:14px}
+.next-row .btn{flex:1}
+
+.results{text-align:center;padding:10px 6px}
+.results .ribbon{display:inline-block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-soft);border:1px solid var(--line);border-radius:999px;padding:5px 14px;margin-bottom:14px}
+.results h2{font-size:26px;margin:6px 0 2px;color:var(--gold-soft)}
+.results .score-big{font-size:64px;font-weight:800;line-height:1;color:#fff;margin:14px 0 4px;text-shadow:0 0 22px rgba(212,175,55,.6)}
+.results .of{font-size:18px;color:var(--gold-soft);letter-spacing:1px}
+.results .pct{font-size:14px;color:var(--muted);margin-top:6px}
+.results .rating{margin:18px 0 6px;font-size:20px;font-weight:800;color:#fff}
+.results .feedback-line{color:var(--muted);font-size:15px;line-height:1.5;max-width:440px;margin:0 auto}
+
+.footer{margin-top:auto;padding:18px 6px 4px;text-align:center;color:#7a7a7a;font-size:11px;line-height:1.5;letter-spacing:.3px}
+.footer .row{margin-bottom:4px}
+.linkish{color:var(--gold-soft);text-decoration:none}
+
+.disclaimer{font-size:12px;color:#9b9b9b;line-height:1.5;margin:8px 0 0;padding:10px 12px;border:1px dashed var(--line-soft);border-radius:10px;background:#070707}
+
+@media (max-width:380px){
+  .hero h1{font-size:26px}
+  .hero-logo{width:144px;height:144px}
+  .btn{font-size:16px;padding:14px}
+  .answer .qlabel{flex:0 0 56px;font-size:11px}
+}
+@media (min-width:720px){
+  .app{padding:24px 28px 60px}
+  .scenario-title{font-size:18px}
+  .scenario-text{font-size:16px}
+  .answer .qtext{font-size:15.5px}
+  .hero h1{font-size:36px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <section class="screen active" id="screen-home">
+    <div class="hero">
+      <div class="hero-logo"><img src="logo.png" alt="Digital Smarts Challenge logo"></div>
+      <span class="pill">WGRALGO Education</span>
+      <h1>Digital Smarts Challenge&trade;</h1>
+      <p class="tagline">Level up your ChatGPT prompts, Google searches, and YouTube how-to searches. Only the <b style="color:var(--best)">Best</b> option scores.</p>
+      <div class="cta-stack">
+        <button class="btn primary" id="btn-start">Start Challenge</button>
+        <button class="btn" id="btn-how">How It Works</button>
+      </div>
+      <div class="disclaimer" style="margin-top:18px;max-width:480px">
+        Educational awareness only. Not legal, financial, medical, cybersecurity, or professional advice. Verify important information through trusted sources and qualified professionals.
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">&copy; The Wealth Gap Resolution Algorithm&trade; Inc.</div>
+      <div class="row">v1.0.0 &middot; Offline &middot; GPLv3</div>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-how">
+    <div class="brandbar"><div class="mark"><img src="logo.png" alt="logo"></div><div><div class="title">How It Works</div><div class="sub">Bad &middot; Good &middot; Better &middot; Best</div></div></div>
+    <div class="card">
+      <h2>The 4 answer levels</h2>
+      <p><b style="color:var(--bad)">Bad</b> &mdash; weak, vague, risky, or unsafe.</p>
+      <p><b style="color:#bbb">Good</b> &mdash; okay, but missing key details.</p>
+      <p><b style="color:var(--gold-soft)">Better</b> &mdash; solid choice, close to ideal.</p>
+      <p><b style="color:var(--best)">Best</b> &mdash; the smart digital habit. <b>Only the Best option scores.</b></p>
+    </div>
+    <div class="card">
+      <h2>The round</h2>
+      <ul>
+        <li>5 scenarios per round.</li>
+        <li>Shuffled each time you play.</li>
+        <li>Mix of ChatGPT prompts, Google searches, YouTube how-to searches, source checking, and digital safety.</li>
+        <li>Instant feedback after every answer.</li>
+        <li>Final results screen with rating.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>What you build</h2>
+      <p>Stronger prompts. Sharper searches. Better source-checking habits. Safer digital choices.</p>
+    </div>
+    <div class="cta-stack">
+      <button class="btn primary" id="btn-how-start">Start Challenge</button>
+      <button class="btn" id="btn-how-back">Back</button>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-game">
+    <div class="brandbar"><div class="mark"><img src="logo.png" alt="logo"></div><div><div class="title">Digital Smarts Challenge&trade;</div><div class="sub" id="round-label">Round &middot; 5 scenarios</div></div></div>
+    <div class="cha-top">
+      <span class="badge" id="cat-badge">Category</span>
+      <div class="score">Best Picks: <b id="score-num">0</b> / <span id="score-total">5</span></div>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="prog"></div></div>
+    <div class="scenario-card">
+      <div class="scenario-num" id="scen-num">Scenario 1 of 5</div>
+      <h3 class="scenario-title" id="scen-title">Scenario title</h3>
+      <p class="scenario-text" id="scen-text">Scenario text</p>
+      <div class="answer-prompt">Pick the smartest move</div>
+      <div class="answers" id="answers"></div>
+    </div>
+    <div class="feedback" id="feedback">
+      <div class="verdict" id="verdict"></div>
+      <div class="lesson" id="lesson"></div>
+      <div class="why-best" id="why-best"></div>
+    </div>
+    <div class="next-row">
+      <button class="btn primary" id="btn-next" style="display:none">Next Scenario</button>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-results">
+    <div class="brandbar"><div class="mark"><img src="logo.png" alt="logo"></div><div><div class="title">Round Complete</div><div class="sub">Digital Smarts Challenge&trade;</div></div></div>
+    <div class="results">
+      <span class="ribbon">Best Picks</span>
+      <div class="score-big"><span id="final-score">0</span><span class="of"> / 5</span></div>
+      <div class="pct" id="final-pct">0%</div>
+      <div class="rating" id="rating-title">Rating</div>
+      <p class="feedback-line" id="rating-line">Feedback</p>
+    </div>
+    <div class="cta-stack">
+      <button class="btn primary" id="btn-restart">Restart Game</button>
+      <button class="btn" id="btn-home">Back to Home</button>
+    </div>
+    <div class="footer">
+      <div class="row">&copy; The Wealth Gap Resolution Algorithm&trade; Inc.</div>
+      <div class="row">v1.0.0 &middot; Offline &middot; GPLv3</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const SCENARIOS = [
+  {cat:"ChatGPT Prompts",title:"Resume help prompt",text:"You want ChatGPT to help rewrite your resume for a warehouse supervisor job.",
+   options:{bad:"\"fix my resume\"",good:"\"Rewrite my resume to sound better.\"",better:"\"Rewrite my resume for a warehouse supervisor role.\"",best:"\"Rewrite my resume for a warehouse supervisor role at a mid-size logistics company. Keep it to one page, use bullet points, highlight 5+ years of forklift and team-lead experience, and mirror keywords from this job description: [paste].\""},
+   lesson:"Better prompts give better results. Tell ChatGPT the role, audience, format, length, and what to emphasize.",
+   why:"Best names the role, the audience, the format, the length, the specific experience to highlight, and pastes the actual job description for keyword matching."},
+  {cat:"ChatGPT Prompts",title:"Checklist request",text:"You're moving apartments next month and want ChatGPT to help you plan.",
+   options:{bad:"\"help me move\"",good:"\"Give me moving advice.\"",better:"\"Make a moving checklist.\"",best:"\"Build a week-by-week moving checklist for a 4-week timeline, one-bedroom apartment, two adults and a cat, with budget under $1,500. Group tasks by week and call out anything I usually forget.\""},
+   lesson:"Ask for a checklist with timeline, scope, and constraints. Vague asks get vague lists.",
+   why:"Best gives the timeline, household size, budget, and asks for structure plus the things people forget."},
+  {cat:"ChatGPT Prompts",title:"Code explainer prompt",text:"You're new to Python and pasted a script you don't understand.",
+   options:{bad:"\"what does this do\"",good:"\"Explain this code.\"",better:"\"Explain this Python code line by line.\"",best:"\"I'm a Python beginner. Explain this code line by line in plain English, name any libraries used, point out anything risky or non-obvious, and end with a 2-sentence summary I could repeat to a teammate.\""},
+   lesson:"Tell ChatGPT your skill level, what to explain, what to flag, and how to summarize.",
+   why:"Best states your level, the depth of explanation, asks for risk callouts, and ends with a teach-back summary."},
+  {cat:"ChatGPT Prompts",title:"Tone, audience, format",text:"You need to email your landlord about a broken heater.",
+   options:{bad:"\"write a heater email\"",good:"\"Write an email to my landlord about the heater.\"",better:"\"Write a polite email to my landlord about a broken heater asking for repair.\"",best:"\"Write a polite, firm email to my landlord. Tenant in unit 4B. The heater has been broken for 5 days. Request a repair within 48 hours, mention I have a young child in the unit, keep it under 120 words, and include a clear subject line.\""},
+   lesson:"Specify tone, audience, format, length, and the exact facts you want included.",
+   why:"Best controls tone, audience, length, subject line, and the key facts the landlord needs."},
+  {cat:"ChatGPT Prompts",title:"Step-by-step plan",text:"You want a plan to save $5,000 in a year.",
+   options:{bad:"\"how do I save money\"",good:"\"Help me save $5,000.\"",better:"\"Give me a plan to save $5,000 this year.\"",best:"\"Build a month-by-month savings plan to reach $5,000 in 12 months. My take-home pay is $3,200/month and rent is $1,100. Suggest 3 categories to cut, an automatic transfer amount, and a check-in question for each month.\""},
+   lesson:"Step-by-step plans need numbers, a timeline, your real constraints, and check-in points.",
+   why:"Best gives the goal, income, fixed costs, asks for cuts, an auto-transfer amount, and monthly check-ins."},
+  {cat:"ChatGPT Prompts",title:"Source-aware answer",text:"You're researching a medication side effect.",
+   options:{bad:"\"is this med safe\"",good:"\"Tell me about side effects of this medication.\"",better:"\"List common side effects of [med name].\"",best:"\"List common side effects of [med name] for an adult. Cite official sources (FDA label, NIH, manufacturer insert) where possible, flag anything urgent, and remind me to confirm with a pharmacist or doctor.\""},
+   lesson:"For health, legal, or money questions, ask the model to cite sources and flag urgency.",
+   why:"Best asks for official sources, urgent flags, and a reminder to verify with a real professional."},
+  {cat:"ChatGPT Prompts",title:"Iterate, don't one-shot",text:"You wrote a cover letter and the first ChatGPT version is just okay.",
+   options:{bad:"Give up and use the first draft as-is.",good:"Ask \"make it better\".",better:"Ask \"make it shorter and more confident\".",best:"Say what worked, what didn't, paste the job description again, and ask: \"Tighten paragraph 2, drop the cliche in line 3, add a metric in the opening, and keep the closing line.\""},
+   lesson:"Treat ChatGPT like a junior writer. Revise with specific instructions, not vague vibes.",
+   why:"Best gives concrete edits per section instead of vague \"better\" requests."},
+  {cat:"ChatGPT Prompts",title:"Examples make prompts stronger",text:"You want ChatGPT to write product descriptions in your brand voice.",
+   options:{bad:"\"write product descriptions\"",good:"\"Write a product description for my candles.\"",better:"\"Write a 60-word product description for a soy candle.\"",best:"\"Write a 60-word product description for a soy candle. Match this voice: [paste 2 of my existing descriptions]. Use sensory words, end with a soft CTA, and avoid the word 'luxurious'.\""},
+   lesson:"Show examples of the voice you want. Models match what you give them.",
+   why:"Best supplies real voice samples, length, sensory direction, CTA shape, and a banned word."},
+
+  {cat:"Google Searches",title:"Specific vs vague keywords",text:"You want to know if your 2017 Toyota Camry has an open recall.",
+   options:{bad:"\"car problem\"",good:"\"Toyota recall\"",better:"\"2017 Camry recall\"",best:"\"2017 Toyota Camry recall site:nhtsa.gov\""},
+   lesson:"Specific keywords plus an official site beat generic terms.",
+   why:"Best narrows to year, model, and the official US recall database."},
+  {cat:"Google Searches",title:"Quoted phrase search",text:"You're trying to find a specific error message from your laptop.",
+   options:{bad:"\"laptop broken\"",good:"\"laptop blue screen\"",better:"\"DRIVER POWER STATE FAILURE\"",best:"\"DRIVER_POWER_STATE_FAILURE\" Windows 11 fix"},
+   lesson:"Quotes force exact-phrase matching. Add platform and intent (\"fix\").",
+   why:"Best quotes the exact error string and adds the OS plus the user goal."},
+  {cat:"Google Searches",title:"Site-specific search",text:"You want recent IRS guidance on the home office deduction.",
+   options:{bad:"\"home office tax stuff\"",good:"\"home office deduction\"",better:"\"home office deduction IRS\"",best:"\"home office deduction site:irs.gov\""},
+   lesson:"site: restricts results to one trusted domain. Great for laws, taxes, and rules.",
+   why:"Best forces results from the official IRS site only."},
+  {cat:"Google Searches",title:"Add the current year",text:"You want the best free budgeting apps available right now.",
+   options:{bad:"\"app for money\"",good:"\"budgeting apps\"",better:"\"best free budgeting apps\"",best:"\"best free budgeting apps 2026 review\""},
+   lesson:"Adding the current year filters out outdated articles.",
+   why:"Best adds the year and the word \"review\" to pull current comparisons, not 2018 lists."},
+  {cat:"Google Searches",title:"Official source first",text:"You want to confirm your state's minimum wage.",
+   options:{bad:"\"how much money per hour\"",good:"\"minimum wage near me\"",better:"\"California minimum wage 2026\"",best:"\"California minimum wage 2026 site:dir.ca.gov\""},
+   lesson:"State labor department sites are authoritative for wage law.",
+   why:"Best searches the official California Dept. of Industrial Relations directly."},
+  {cat:"Google Searches",title:"Compare multiple sources",text:"You read a wild health claim on social media.",
+   options:{bad:"Trust the first post and share it.",good:"Search the claim and read the top result.",better:"Search the claim and read 2 articles.",best:"Search the claim, read 3+ sources across official health agencies, established news outlets, and a fact-checker, and compare what they say."},
+   lesson:"Cross-check important claims across multiple sources before believing or sharing.",
+   why:"Best compares official, journalistic, and fact-checking sources before forming an opinion."},
+  {cat:"Google Searches",title:"Avoid clickbait results",text:"You want to learn whether a stock is a good buy.",
+   options:{bad:"Click the YouTube thumbnail screaming \"100x soon!\"",good:"Click the first blog with the stock ticker in the title.",better:"Read an article from a known finance outlet.",best:"Pull the company's 10-K filing on SEC.gov, plus a major outlet's coverage, plus a finance news site, and compare."},
+   lesson:"For money decisions, prefer primary documents and established outlets over hype.",
+   why:"Best uses the official SEC filing as the primary source and triangulates with established coverage."},
+  {cat:"Google Searches",title:"Operators that filter junk",text:"You want a real Linux command answer, not a content farm.",
+   options:{bad:"\"how do I do that command thing\"",good:"\"linux command tar\"",better:"\"extract tar.gz linux command\"",best:"\"extract tar.gz\" site:stackoverflow.com OR site:askubuntu.com"},
+   lesson:"Quotes plus site: plus OR narrow results to high-signal communities.",
+   why:"Best uses an exact phrase and restricts to two trusted Q and A sites."},
+  {cat:"Google Searches",title:"Date-filter recent issues",text:"You're checking if a service has a current outage.",
+   options:{bad:"\"is the internet down\"",good:"\"service outage\"",better:"\"[Service Name] outage\"",best:"\"[Service Name] outage\" past 24 hours, plus the official status page and a downdetector check."},
+   lesson:"For \"is it down right now\", use time-filtered queries and the official status page.",
+   why:"Best time-filters to the last 24 hours and checks the official status page plus a third-party tracker."},
+
+  {cat:"YouTube How-To",title:"Beginner-friendly framing",text:"You've never used Excel and need to build a simple budget.",
+   options:{bad:"\"excel\"",good:"\"excel tutorial\"",better:"\"excel beginner tutorial\"",best:"\"excel budget tutorial for absolute beginners 2026 step by step\""},
+   lesson:"Search with your skill level, your goal, the year, and a structured format.",
+   why:"Best includes the goal (budget), the level (absolute beginner), the year, and step-by-step format."},
+  {cat:"YouTube How-To",title:"Tool + version match",text:"You want to install a plugin in Blender 4.5.",
+   options:{bad:"\"how to install\"",good:"\"blender plugin install\"",better:"\"install plugin blender\"",best:"\"install addon Blender 4.5 tutorial\""},
+   lesson:"Match the exact tool version. Old menus and shortcuts trip you up otherwise.",
+   why:"Best names the tool (Blender), the version (4.5), and the modern term (addon)."},
+  {cat:"YouTube How-To",title:"Recent tutorials only",text:"You want to set up the latest version of a phone app.",
+   options:{bad:"Watch the top result from 2017.",good:"Watch the most viewed result.",better:"Filter to \"This year\".",best:"Filter by upload date \"This month\" or \"This year\", check the version mentioned in the video, and confirm the menus match what you see on your phone."},
+   lesson:"Software changes fast. Filter by upload date and verify the version on screen.",
+   why:"Best filters by recency and verifies the on-screen UI matches the current version."},
+  {cat:"YouTube How-To",title:"Creator credibility",text:"You're learning how to do your own taxes from YouTube.",
+   options:{bad:"Trust the loud guy promising the IRS \"hates this trick\".",good:"Watch the most viewed video.",better:"Watch a video from a channel with a tax-pro credential in the description.",best:"Watch a video from a CPA or enrolled-agent channel, cross-check with IRS.gov publications, and confirm with a real tax professional for your situation."},
+   lesson:"Verify the creator's credentials. Cross-check with the official source. Get a pro for big decisions.",
+   why:"Best checks credentials, verifies against the IRS, and gets a real professional for the actual return."},
+  {cat:"YouTube How-To",title:"Read the comments",text:"You found a tutorial that looks great.",
+   options:{bad:"Skip the comments and follow blindly.",good:"Scroll one or two comments.",better:"Sort by Top and read the highlights.",best:"Sort by Newest, scan for \"doesn't work in version X\", \"missing step\", or \"this fried my computer\" before following any commands."},
+   lesson:"Newest comments catch broken tutorials and recent gotchas. Top comments can be old.",
+   why:"Best sorts by Newest to surface recent breakage, missing steps, and warnings."},
+  {cat:"YouTube How-To",title:"Skip the \"too easy\" claims",text:"A thumbnail says \"Earn $10,000/week in 5 minutes a day.\"",
+   options:{bad:"Subscribe and follow the steps.",good:"Watch the whole thing first.",better:"Search the creator's name + \"scam\".",best:"Treat it as advertising. Search the creator's name plus \"scam\", \"review\", and \"refund\". Verify any course or product claim on an established review site before paying."},
+   lesson:"\"Instant money\" content is almost always selling something. Verify before paying.",
+   why:"Best treats it as advertising and triangulates across scam reports, reviews, and refund threads."},
+  {cat:"YouTube How-To",title:"Full walkthroughs",text:"You want to replace a car battery yourself.",
+   options:{bad:"\"car fix\"",good:"\"replace car battery\"",better:"\"how to replace car battery\"",best:"\"how to replace battery 2017 Toyota Camry full walkthrough no cuts\""},
+   lesson:"Specify the exact make, model, year, and ask for a full no-cuts walkthrough.",
+   why:"Best names the year/make/model and demands a continuous, full walkthrough."},
+  {cat:"YouTube How-To",title:"Troubleshooting search",text:"Your printer keeps showing a \"paper jam\" error but no paper is jammed.",
+   options:{bad:"\"printer broken\"",good:"\"paper jam\"",better:"\"HP printer paper jam fix\"",best:"\"HP DeskJet 2755 phantom paper jam no paper inside fix 2026\""},
+   lesson:"Troubleshooting works when you name the exact model and the exact (often weird) symptom.",
+   why:"Best includes the model, the unusual symptom (\"phantom\", \"no paper inside\"), and the year."},
+
+  {cat:"Source Checking",title:"Official vs random blog",text:"You're checking the eligibility rules for a federal benefit.",
+   options:{bad:"A Facebook screenshot.",good:"A random blog with no author bio.",better:"A news article summarizing the rules.",best:"The official agency website (e.g., ssa.gov, irs.gov, hud.gov) for the actual rule, and a news article for context."},
+   lesson:"For rules, laws, and benefits: official source first. News second. Random blogs last.",
+   why:"Best goes to the agency that writes the rule, then uses news only for context."},
+  {cat:"Source Checking",title:"Check the date",text:"An article claims a law just changed.",
+   options:{bad:"Share it without checking when it was written.",good:"Note the date and move on.",better:"Check the publish date.",best:"Check the publish date, the last-updated date, and confirm on the official source that the change is still current."},
+   lesson:"Articles age. Always check both publish and last-updated dates, and confirm with the source.",
+   why:"Best checks both dates and confirms the change against the authoritative source."},
+  {cat:"Source Checking",title:"Author credibility",text:"You're reading health advice online.",
+   options:{bad:"\"someone on the internet said\"",good:"Anonymous \"Health Editor\" byline.",better:"An author with a bio but no medical training listed.",best:"A licensed clinician with named credentials, an institution, and links to peer-reviewed studies."},
+   lesson:"Check the author. Real credentials, named institution, and linked evidence beat anonymous bylines.",
+   why:"Best requires named credentials, an institution, and links to peer-reviewed evidence."},
+  {cat:"Source Checking",title:"Cross-check the claim",text:"A viral post says a specific food cures a disease.",
+   options:{bad:"Believe it because it's everywhere.",good:"Read the post twice.",better:"Search for one supporting article.",best:"Search the specific claim across CDC/NIH, a major medical center, and a peer-reviewed study database. Believe only what shows up consistently in those."},
+   lesson:"Cures are big claims. Big claims need consistent evidence across high-quality sources.",
+   why:"Best demands agreement across an agency, a medical center, and peer-reviewed research."},
+  {cat:"Source Checking",title:"Sponsored content",text:"A \"best products\" list ranks 10 items.",
+   options:{bad:"Buy the #1 pick without reading the page.",good:"Scroll to the bottom.",better:"Notice the \"affiliate disclosure\" link.",best:"Read the disclosure, check whether the writer tested the items, and compare against an independent review site and user reviews on a marketplace."},
+   lesson:"Many \"best of\" lists are affiliate-driven. Verify with independent tests and real user reviews.",
+   why:"Best reads the disclosure, then verifies with an independent test and real-user reviews."},
+  {cat:"Source Checking",title:"Evidence vs opinion",text:"A finance influencer says \"this stock will moon\".",
+   options:{bad:"Buy because they sounded confident.",good:"Like the post.",better:"Look up the ticker on a finance site.",best:"Read the company's latest 10-Q/10-K on SEC.gov, check at least two independent analyses, and ignore confidence-without-evidence."},
+   lesson:"Confidence is not evidence. Primary filings plus independent analyses beat hype.",
+   why:"Best replaces influencer confidence with primary SEC filings and independent analysis."},
+  {cat:"Source Checking",title:"AI answers need verification",text:"An AI chatbot gives you a court ruling citation.",
+   options:{bad:"Copy-paste into your filing.",good:"Search the case name once.",better:"Verify the case exists.",best:"Verify the case exists on an official court database (e.g., PACER, your state court site), confirm the holding matches what the AI claimed, and read the actual ruling."},
+   lesson:"AI can hallucinate citations. Always verify legal/medical/financial citations against the official record.",
+   why:"Best goes to the actual court record and confirms both existence and holding."},
+  {cat:"Source Checking",title:"Triangulate big claims",text:"A breaking news headline says a CEO was arrested.",
+   options:{bad:"Retweet immediately.",good:"Wait an hour and check the same outlet again.",better:"Check one other outlet.",best:"Confirm across at least three independent established outlets and look for an official statement from law enforcement or the company."},
+   lesson:"Breaking news is often wrong in the first hour. Wait for independent confirmation and official statements.",
+   why:"Best waits for confirmation across multiple independent outlets and an official statement."},
+
+  {cat:"Digital Safety",title:"Password sharing",text:"A free \"resume helper\" website asks for your Gmail password to import your resume.",
+   options:{bad:"Type in your Gmail password to keep going.",good:"Type a fake password.",better:"Close the tab.",best:"Close the tab, never share your email password with a third-party site, and use the official \"Sign in with Google\" flow or upload a PDF instead."},
+   lesson:"Never share your real email/bank/SSN credentials with a third-party site. Use official sign-in flows or file uploads.",
+   why:"Best refuses the password ask and uses the safe official auth flow or file upload."},
+  {cat:"Digital Safety",title:"Phishing recognition",text:"You get a text: \"USPS: package undeliverable. Pay $1.99 reshipping fee: [shady-link].\"",
+   options:{bad:"Click and enter your card.",good:"Reply \"STOP\".",better:"Ignore it.",best:"Don't click, don't reply. Go directly to usps.com or the carrier's official app to check the tracking number. Report the text as smishing."},
+   lesson:"Real carriers don't text random reshipping fees. Type the official site yourself; never click texted links.",
+   why:"Best avoids the link entirely, verifies through the official site, and reports the message."},
+  {cat:"Digital Safety",title:"Suspicious downloads",text:"A YouTube comment offers \"free Photoshop full version\" via a download link.",
+   options:{bad:"Download and run it.",good:"Download but don't open it.",better:"Scan it with one antivirus.",best:"Don't download. Cracked software is a common malware delivery method. Use a free official alternative (GIMP, Photopea) or the official Adobe trial."},
+   lesson:"\"Free full version\" downloads from comments are a top malware vector. Use legitimate free alternatives.",
+   why:"Best refuses the download entirely and uses a legitimate free or trial option."},
+  {cat:"Digital Safety",title:"Check the URL",text:"You get an email \"from your bank\" with a login link.",
+   options:{bad:"Click the link and log in.",good:"Hover the link and click if it looks okay.",better:"Hover, see the real URL, decide it looks weird, and delete the email.",best:"Don't click anything in the email. Open your browser, type your bank's URL yourself or use the official bank app. Report the email as phishing."},
+   lesson:"Never log in through an emailed link. Type the URL or use the official app, then report the phishing email.",
+   why:"Best never clicks email links, uses a self-typed URL or official app, and reports the phish."},
+  {cat:"Digital Safety",title:"App permissions",text:"A flashlight app asks for contacts, location, and microphone.",
+   options:{bad:"Allow all so it works.",good:"Allow location only.",better:"Deny some permissions and try the app.",best:"Deny all unnecessary permissions. A flashlight needs none of that. Pick a different app from a known publisher with minimal permissions."},
+   lesson:"Apps should only get permissions they actually need. Overreaching permissions = pick a different app.",
+   why:"Best denies everything unnecessary and switches to a low-permission, reputable app."},
+  {cat:"Digital Safety",title:"Too-good-to-be-true offers",text:"An ad promises \"$5,000/week, no experience, no skills, just sign up\".",
+   options:{bad:"Sign up and pay the \"starter kit\" fee.",good:"Click to learn more.",better:"Read reviews on the company's site.",best:"Treat it as a likely scam. Search the company name plus \"scam\", \"FTC\", \"BBB complaints\", and \"refund\". Real jobs don't charge you to start."},
+   lesson:"Guaranteed money with no skills is a scam pattern. Real jobs pay you; they don't charge you.",
+   why:"Best assumes scam, researches with strong red-flag keywords, and trusts the \"don't pay to work\" rule."},
+  {cat:"Digital Safety",title:"Public Wi-Fi sign-in",text:"You need to log into your bank from a coffee shop.",
+   options:{bad:"Log in on the open Wi-Fi with no protection.",good:"Use the public Wi-Fi and hope for the best.",better:"Use the public Wi-Fi but only check the balance.",best:"Use your phone's cellular hotspot or a trusted VPN. Don't sign into banking on open public Wi-Fi."},
+   lesson:"Open Wi-Fi can expose login traffic. Use cellular or a trusted VPN for sensitive logins.",
+   why:"Best avoids open Wi-Fi for banking entirely and uses cellular or a trusted VPN."},
+  {cat:"Digital Safety",title:"Two-factor authentication",text:"Your important accounts (email, bank, work) only have a password.",
+   options:{bad:"Reuse the same password everywhere.",good:"Use unique passwords.",better:"Use unique passwords plus SMS 2FA.",best:"Use unique passwords stored in a reputable password manager, plus app-based or hardware-key 2FA on every important account."},
+   lesson:"Unique passwords plus a password manager plus app/hardware 2FA is the modern baseline for important accounts.",
+   why:"Best layers a password manager with phishing-resistant 2FA, not just SMS."}
+];
+
+const QS = ["bad","good","better","best"];
+let state = {round:[],idx:0,score:0,locked:false};
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function show(screenId){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  try{window.scrollTo({top:0,behavior:'instant'});}catch(e){window.scrollTo(0,0);}
+}
+
+function startRound(){
+  state.round = shuffle(SCENARIOS).slice(0,5);
+  state.idx = 0;
+  state.score = 0;
+  state.locked = false;
+  document.getElementById('score-total').textContent = state.round.length;
+  show('screen-game');
+  renderScenario();
+}
+
+function renderScenario(){
+  state.locked = false;
+  const s = state.round[state.idx];
+  document.getElementById('cat-badge').textContent = s.cat;
+  document.getElementById('score-num').textContent = state.score;
+  document.getElementById('scen-num').textContent = "Scenario " + (state.idx+1) + " of " + state.round.length;
+  document.getElementById('scen-title').textContent = s.title;
+  document.getElementById('scen-text').textContent = s.text;
+  document.getElementById('prog').style.width = ((state.idx)/state.round.length*100) + "%";
+  document.getElementById('feedback').classList.remove('show','correct','incorrect');
+  document.getElementById('btn-next').style.display = 'none';
+
+  const answers = document.getElementById('answers');
+  answers.innerHTML = '';
+  const order = shuffle(QS);
+  order.forEach(key=>{
+    const btn = document.createElement('button');
+    btn.className = 'answer';
+    btn.dataset.key = key;
+    const label = document.createElement('span');
+    label.className = 'qlabel';
+    label.textContent = key.toUpperCase();
+    const text = document.createElement('span');
+    text.className = 'qtext';
+    text.textContent = s.options[key];
+    btn.appendChild(label);
+    btn.appendChild(text);
+    btn.addEventListener('click',()=>handleAnswer(key,btn));
+    answers.appendChild(btn);
+  });
+}
+
+function handleAnswer(key,btnEl){
+  if(state.locked) return;
+  state.locked = true;
+  const s = state.round[state.idx];
+  const isBest = key === 'best';
+  if(isBest) state.score += 1;
+  document.getElementById('score-num').textContent = state.score;
+  document.getElementById('prog').style.width = ((state.idx+1)/state.round.length*100) + "%";
+
+  document.querySelectorAll('.answer').forEach(b=>{
+    b.classList.add('locked');
+    b.disabled = true;
+    const k = b.dataset.key;
+    if(k==='best') b.classList.add('is-best');
+    else if(k==='bad') b.classList.add('is-bad');
+    else if(k==='good') b.classList.add('is-good');
+    else if(k==='better') b.classList.add('is-better');
+    if(b===btnEl) b.classList.add('picked');
+    else b.classList.add('dim');
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.classList.add('show');
+  if(isBest){
+    fb.classList.add('correct');
+    document.getElementById('verdict').textContent = "Correct — Best Pick";
+  } else {
+    fb.classList.add('incorrect');
+    const label = key.charAt(0).toUpperCase()+key.slice(1);
+    document.getElementById('verdict').textContent = "Not Best — you picked " + label;
+  }
+  document.getElementById('lesson').textContent = s.lesson;
+  document.getElementById('why-best').innerHTML = '<b>Why "Best" wins:</b> ' + s.why;
+
+  const next = document.getElementById('btn-next');
+  next.style.display = '';
+  next.textContent = (state.idx+1 >= state.round.length) ? "See Results" : "Next Scenario";
+}
+
+function nextScenario(){
+  state.idx += 1;
+  if(state.idx >= state.round.length){
+    finishRound();
+    return;
+  }
+  renderScenario();
+}
+
+function finishRound(){
+  document.getElementById('final-score').textContent = state.score;
+  const pct = Math.round(state.score/state.round.length*100);
+  document.getElementById('final-pct').textContent = pct + "%";
+  const ratings = [
+    {min:5,title:"Digital Master",line:"Top-tier digital smarts. You ask sharp questions, you check your sources, and you don't get played by hype."},
+    {min:4,title:"Smart Searcher",line:"Strong instincts. Tighten one or two habits and you'll be at the top."},
+    {min:3,title:"Getting Sharper",line:"You're building the right habits. Keep practicing specific prompts and source checks."},
+    {min:2,title:"Needs Practice",line:"Slow down. Be more specific in prompts and verify big claims before trusting them."},
+    {min:0,title:"Restart the Challenge",line:"That's okay — these are skills, not luck. Replay and focus on the \"why Best wins\" notes."}
+  ];
+  const r = ratings.find(x => state.score >= x.min);
+  document.getElementById('rating-title').textContent = r.title;
+  document.getElementById('rating-line').textContent = r.line;
+  show('screen-results');
+}
+
+document.getElementById('btn-start').addEventListener('click',startRound);
+document.getElementById('btn-how').addEventListener('click',()=>show('screen-how'));
+document.getElementById('btn-how-start').addEventListener('click',startRound);
+document.getElementById('btn-how-back').addEventListener('click',()=>show('screen-home'));
+document.getElementById('btn-next').addEventListener('click',nextScenario);
+document.getElementById('btn-restart').addEventListener('click',startRound);
+document.getElementById('btn-home').addEventListener('click',()=>show('screen-home'));
+
+document.addEventListener('backbutton',function(e){
+  const active = document.querySelector('.screen.active').id;
+  if(active === 'screen-home'){ return; }
+  e.preventDefault();
+  show('screen-home');
+},false);
+</script>
+</body>
+</html>
