@@ -1,6 +1,6 @@
 # Privacy Statement — Digital Smarts Challenge
 
-**Last updated:** 2026-05-26
+**Last updated:** 2026-10-01 (v1.1.0)
 
 Digital Smarts Challenge is an offline educational digital-literacy game published by **The Wealth Gap Resolution Algorithm™ Inc. (WGRALGO)**.
 
