@@ -2,7 +2,8 @@
 
 Digital Smarts Challenge is a free educational Android app from **The Wealth Gap Resolution Algorithm™ Inc.** It helps users practice stronger AI chatbot prompts, Google searches, and YouTube how-to searches through quick **Bad / Good / Better / Best** scenarios.
 
-- **Version:** 1.1.0
+- **Version:** 2.0.0
+- **Devices:** phones and tablets, portrait and landscape
 - **Package:** `org.wgralgo.digitalsmartschallenge`
 - **Platform:** Android (offline, sideload via APK)
 - **Website:** https://thewealthgapresolutionalgorithm.org/digital-smarts-challenge/
@@ -31,7 +32,7 @@ Digital Smarts Challenge is a free educational Android app from **The Wealth Gap
 
 ## How to install (sideload)
 
-1. Download `DigitalSmartsChallenge-v1.1.0.apk` from the [Releases](../../releases) page.
+1. Download `WGRALGO-DigitalSmartsChallenge-v2.0.0.apk` from the [Releases](../../releases) page.
 2. On your Android device, allow installs from unknown sources for your file manager / browser.
 3. Tap the APK to install.
 4. Open **Digital Smarts Challenge** from your app drawer.
@@ -41,10 +42,10 @@ Digital Smarts Challenge is a free educational Android app from **The Wealth Gap
 ### Verify the APK
 
 ```
-sha256sum DigitalSmartsChallenge-v1.1.0.apk
+sha256sum WGRALGO-DigitalSmartsChallenge-v2.0.0.apk
 ```
 
-Compare against `DigitalSmartsChallenge-v1.1.0.apk.sha256` in the release.
+Compare against `WGRALGO-DigitalSmartsChallenge-v2.0.0.apk.sha256` in the release.
 
 Signing certificate (v1.1.0 and later):
 
@@ -52,7 +53,7 @@ Signing certificate (v1.1.0 and later):
 - SHA-256: `5F:01:6A:52:99:9E:0E:04:72:2F:2C:5E:D7:7F:F1:D5:4D:87:4E:2B:38:27:87:C8:C4:13:7C:BA:E4:E9:5B:9C`
 
 ```
-apksigner verify --print-certs DigitalSmartsChallenge-v1.1.0.apk
+apksigner verify --print-certs WGRALGO-DigitalSmartsChallenge-v2.0.0.apk
 ```
 
 ## How to build from source
